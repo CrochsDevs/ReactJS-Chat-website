@@ -2,14 +2,12 @@ import connectDB from "../../config/db.js";
 import { ObjectId } from "mongodb";
 import bcrypt from 'bcryptjs';
 
-// ==================== USER CREATION ====================
 export const createUser = async (userData) => {
     try {
         const db = await connectDB();
 
         const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-        // 1. USERS collection - profile info only (NO email, NO password)
         const userProfile = {
             fullName: userData.fullName,
             username: userData.username,
@@ -37,7 +35,6 @@ export const createUser = async (userData) => {
         const profileResult = await db.collection("users").insertOne(userProfile);
         const userId = profileResult.insertedId;
 
-        // 2. AUTH collection - credentials only (email, password)
         const authEntry = {
             userId: userId,
             email: userData.email,
@@ -59,7 +56,6 @@ export const createUser = async (userData) => {
     }
 };
 
-// ==================== FIND USERS ====================
 export const findUserByEmail = async (email) => {
     try {
         const db = await connectDB();
@@ -129,7 +125,6 @@ export const getCompleteUser = async (userId) => {
     }
 };
 
-// ==================== GET ALL USERS ====================
 export const getAllUsers = async () => {
     try {
         const db = await connectDB();
@@ -141,7 +136,6 @@ export const getAllUsers = async () => {
     }
 };
 
-// ==================== UPDATE FUNCTIONS ====================
 export const updateUserProfile = async (userId, updateData) => {
     try {
         const db = await connectDB();
@@ -190,7 +184,6 @@ export const updateOnlineStatus = async (userId, isOnline) => {
     }
 };
 
-// ==================== DELETE USER ====================
 export const deleteUser = async (userId) => {
     try {
         const db = await connectDB();
@@ -203,7 +196,6 @@ export const deleteUser = async (userId) => {
     }
 };
 
-// ==================== FRIEND FUNCTIONS ====================
 export const addFriend = async (userId, friendId) => {
     try {
         const db = await connectDB();

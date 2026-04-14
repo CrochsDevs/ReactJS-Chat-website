@@ -15,16 +15,14 @@ dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Cookie options
 const cookieOptions = {
     httpOnly: true,
-    secure: false, // Set to true only in production with HTTPS
+    secure: false,
     sameSite: 'lax',
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/'
 };
 
-// ==================== REGISTER ====================
 export const register = async (req, res) => {
     console.log("📝 Register request:", { email: req.body.email });
 
@@ -57,7 +55,6 @@ export const register = async (req, res) => {
             { expiresIn: '7d' }
         );
 
-        // Set cookie
         res.cookie('token', token, cookieOptions);
 
         res.status(201).json({
@@ -78,7 +75,6 @@ export const register = async (req, res) => {
     }
 };
 
-// ==================== LOGIN ====================
 export const login = async (req, res) => {
     console.log("🔐 Login request:", req.body.email);
 
@@ -107,7 +103,6 @@ export const login = async (req, res) => {
             { expiresIn: '7d' }
         );
 
-        // Set cookie
         res.cookie('token', token, cookieOptions);
 
         console.log("✅ Login successful, cookie set for:", email);
@@ -131,7 +126,6 @@ export const login = async (req, res) => {
     }
 };
 
-// ==================== LOGOUT ====================
 export const logout = async (req, res) => {
     try {
         const userId = req.userId;
@@ -139,7 +133,6 @@ export const logout = async (req, res) => {
             await updateOnlineStatus(userId, false);
         }
 
-        // Clear the cookie
         res.clearCookie('token', { path: '/' });
 
         res.status(200).json({
@@ -152,7 +145,6 @@ export const logout = async (req, res) => {
     }
 };
 
-// ==================== GET CURRENT USER ====================
 export const getCurrentUser = async (req, res) => {
     try {
         const userId = req.userId;
@@ -171,7 +163,6 @@ export const getCurrentUser = async (req, res) => {
     }
 };
 
-// ==================== GET ALL USERS ====================
 export const getUsers = async (req, res) => {
     try {
         const users = await getAllUsers();
@@ -182,7 +173,6 @@ export const getUsers = async (req, res) => {
     }
 };
 
-// ==================== UPDATE PROFILE ====================
 export const updateProfile = async (req, res) => {
     try {
         const userId = req.userId;
