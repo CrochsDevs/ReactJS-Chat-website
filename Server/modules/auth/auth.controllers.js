@@ -15,11 +15,12 @@ dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// Cookie options - ITO ANG IMPORTANTE PARA HINDI MAG-SHARE SA IBANG BROWSER
 const cookieOptions = {
     httpOnly: true,
-    secure: false,
-    sameSite: 'lax',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    secure: false,        // true lang kung naka-HTTPS
+    sameSite: 'strict',   // 'strict' = hindi nagsha-share sa ibang site/browser
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/'
 };
 
@@ -103,9 +104,22 @@ export const login = async (req, res) => {
             { expiresIn: '7d' }
         );
 
-        res.cookie('token', token, cookieOptions);
+        // ITO ANG SUSI - sinisigurado na ang cookie ay naka-set ng tama
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'strict',  // <-- 'strict' para hindi mag-share sa ibang browser
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: '/'
+        });
 
         console.log("✅ Login successful, cookie set for:", email);
+        console.log("Cookie options:", {
+            httpOnly: true,
+            sameSite: 'strict',
+            secure: false,
+            path: '/'
+        });
 
         res.status(200).json({
             success: true,
@@ -133,7 +147,12 @@ export const logout = async (req, res) => {
             await updateOnlineStatus(userId, false);
         }
 
-        res.clearCookie('token', { path: '/' });
+        // I-clear ang cookie
+        res.clearCookie('token', { 
+            path: '/',
+            httpOnly: true,
+            sameSite: 'strict'
+        });
 
         res.status(200).json({
             success: true,
